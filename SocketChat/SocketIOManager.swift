@@ -50,6 +50,9 @@ class SocketIOManager: NSObject {
         socket.on("userList") { ( dataArray, ack) -> Void in
             completionHandler(userList: dataArray[0] as! [[String: AnyObject]])
         }
+        
+        listenForOtherMessages()
+
 
     }
     
@@ -71,6 +74,24 @@ class SocketIOManager: NSObject {
             messageDictionary["date"] = dataArray[2] as! String
             
             completionHandler(messageInfo: messageDictionary)
+        }
+    }
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Listening
+    
+    private func listenForOtherMessages() {
+        
+        //send the respective information using the 'object' property of the notification
+        
+        socket.on("userConnectUpdate") { (dataArray, socketAck) -> Void in
+            //the server returns a dictionary that contains all the new user information
+            NSNotificationCenter.defaultCenter().postNotificationName("userWasConnectedNotification", object: dataArray[0] as! [String: AnyObject])
+        }
+        socket.on("userExitUpdate") { (dataArray, socketAck) -> Void in
+            //the server returns just the nickname of the user that left the chat
+            NSNotificationCenter.defaultCenter().postNotificationName("userWasDisconnectedNotification", object: dataArray[0] as! String)
         }
     }
     

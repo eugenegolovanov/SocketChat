@@ -29,6 +29,11 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     var bannerLabelTimer: NSTimer!
     
     
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - View Lifecycle
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -37,6 +42,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardDidShowNotification:", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardDidHideNotification:", name: UIKeyboardDidHideNotification, object: nil)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleConnectedUserUpdateNotification:", name: "userWasConnectedNotification", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDisconnectedUserUpdateNotification:", name: "userWasDisconnectedNotification", object: nil)
+
         
         let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "dismissKeyboard")
         swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Down
@@ -84,6 +92,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     
     /*
+     //--------------------------------------------------------------------------------------------------------------------------
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -92,8 +101,40 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         // Pass the selected object to the new view controller.
     }
     */
+    
+    
+    
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Observing users
+    
+    
+    /**
+     display the nickname of the disconnected user.
+     */
+    func handleDisconnectedUserUpdateNotification(notification: NSNotification) {
+        let disconnectedUserNickname = notification.object as! String
+        lblNewsBanner.text = "User \(disconnectedUserNickname.uppercaseString) has left."
+        showBannerLabelAnimated()
+    }
+    
+    
+    /**
+     extract the connected user’s nickname from the notification’s object property
+     We’ll then specify the label’s text, and we’ll trigger its appearance
+     */
+    func handleConnectedUserUpdateNotification(notification: NSNotification) {
+        let connectedUserInfo = notification.object as! [String: AnyObject]
+        let connectedUserNickname = connectedUserInfo["nickname"] as? String
+        lblNewsBanner.text = "User \(connectedUserNickname!.uppercaseString) was just connected."
+        showBannerLabelAnimated()
+    }
 
     
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------------
     // MARK: IBAction Methods
     
     @IBAction func sendMessage(sender: AnyObject) {
@@ -106,7 +147,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     }
 
-    
+    //--------------------------------------------------------------------------------------------------------------------------
     // MARK: Custom Methods
     
     func configureTableView() {
@@ -192,7 +233,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    
+    //--------------------------------------------------------------------------------------------------------------------------
     // MARK: UITableView Delegate and Datasource Methods
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -228,14 +269,14 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
-    
+    //--------------------------------------------------------------------------------------------------------------------------
     // MARK: UITextViewDelegate Methods
     
     func textViewShouldBeginEditing(textView: UITextView) -> Bool {
         return true
     }
 
-    
+    //--------------------------------------------------------------------------------------------------------------------------
     // MARK: UIGestureRecognizerDelegate Methods
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
