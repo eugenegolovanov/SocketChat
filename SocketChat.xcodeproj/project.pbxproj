@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4411C19F1D1270AA00DC8819 /* SocketIOManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411C19E1D1270AA00DC8819 /* SocketIOManager.swift */; };
 		44803F551D122E4E0070EBDC /* NSCharacterSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44803F3F1D122E4E0070EBDC /* NSCharacterSet.swift */; };
 		44803F561D122E4E0070EBDC /* SocketAckEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44803F401D122E4E0070EBDC /* SocketAckEmitter.swift */; };
 		44803F571D122E4E0070EBDC /* SocketAckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44803F411D122E4E0070EBDC /* SocketAckManager.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4411C19E1D1270AA00DC8819 /* SocketIOManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketIOManager.swift; sourceTree = "<group>"; };
 		44803F3F1D122E4E0070EBDC /* NSCharacterSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSCharacterSet.swift; sourceTree = "<group>"; };
 		44803F401D122E4E0070EBDC /* SocketAckEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAckEmitter.swift; sourceTree = "<group>"; };
 		44803F411D122E4E0070EBDC /* SocketAckManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAckManager.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 		C075D71B1C5E0E81009F9044 /* SocketChat */ = {
 			isa = PBXGroup;
 			children = (
+				4411C19E1D1270AA00DC8819 /* SocketIOManager.swift */,
 				C075D7331C5E0EC9009F9044 /* Custom Cells */,
 				C075D72E1C5E0E96009F9044 /* View Controllers */,
 				C075D71C1C5E0E81009F9044 /* AppDelegate.swift */,
@@ -264,6 +267,7 @@
 				44803F651D122E4E0070EBDC /* SocketPacket.swift in Sources */,
 				44803F5B1D122E4E0070EBDC /* SocketEnginePacketType.swift in Sources */,
 				44803F611D122E4E0070EBDC /* SocketIOClientOption.swift in Sources */,
+				4411C19F1D1270AA00DC8819 /* SocketIOManager.swift in Sources */,
 				44803F5F1D122E4E0070EBDC /* SocketEventHandler.swift in Sources */,
 				44803F631D122E4E0070EBDC /* SocketIOClientStatus.swift in Sources */,
 				44803F5E1D122E4E0070EBDC /* SocketEngineWebsocket.swift in Sources */,
