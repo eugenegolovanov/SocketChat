@@ -42,8 +42,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardDidShowNotification:", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardDidHideNotification:", name: UIKeyboardDidHideNotification, object: nil)
         
+        //Other users connected or disconnected notifications
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleConnectedUserUpdateNotification:", name: "userWasConnectedNotification", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDisconnectedUserUpdateNotification:", name: "userWasDisconnectedNotification", object: nil)
+
+        //Other user typing notification
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUserTypingNotification:", name: "userTypingNotification", object: nil)
 
         
         let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "dismissKeyboard")
@@ -107,7 +111,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     //--------------------------------------------------------------------------------------------------------------------------
-    //MARK: - Observing users
+    //MARK: - Observing users Connected Disconnected
     
     
     /**
@@ -131,6 +135,33 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         showBannerLabelAnimated()
     }
 
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Observing users Typing
+
+    func handleUserTypingNotification(notification: NSNotification) {
+        if let typingUsersDictionary = notification.object as? [String: AnyObject] {
+            var names = ""
+            var totalTypingUsers = 0
+            for (typingUser, _) in typingUsersDictionary {
+                if typingUser != nickname {
+                    names = (names == "") ? typingUser : "\(names), \(typingUser)"
+                    totalTypingUsers += 1
+                }
+            }
+            
+            if totalTypingUsers > 0 {
+                let verb = (totalTypingUsers == 1) ? "is" : "are"
+                
+                lblOtherUserActivityStatus.text = "\(names) \(verb) now typing a message..."
+                lblOtherUserActivityStatus.hidden = false
+            }
+            else {
+                lblOtherUserActivityStatus.hidden = true
+            }
+        }
+        
+    }
     
     
     
@@ -229,6 +260,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     func dismissKeyboard() {
         if tvMessageEditor.isFirstResponder() {
             tvMessageEditor.resignFirstResponder()
+            
+            //Notify server that user is Stops Typing
+            SocketIOManager.sharedInstance.sendStopTypingMessage(nickname)
         }
     }
     
@@ -273,6 +307,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: UITextViewDelegate Methods
     
     func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        
+        //Notify server that user is Starts Typing
+        SocketIOManager.sharedInstance.sendStartTypingMessage(nickname)
+
         return true
     }
 

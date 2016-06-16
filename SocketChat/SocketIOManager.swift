@@ -79,7 +79,7 @@ class SocketIOManager: NSObject {
     
     
     //--------------------------------------------------------------------------------------------------------------------------
-    //MARK: - Listening
+    //MARK: - Listen users connection disconnection and typing
     
     private func listenForOtherMessages() {
         
@@ -93,7 +93,30 @@ class SocketIOManager: NSObject {
             //the server returns just the nickname of the user that left the chat
             NSNotificationCenter.defaultCenter().postNotificationName("userWasDisconnectedNotification", object: dataArray[0] as! String)
         }
+        
+        
+        socket.on("userTypingUpdate") { (dataArray, socketAck) -> Void in
+            NSNotificationCenter.defaultCenter().postNotificationName("userTypingNotification", object: dataArray[0] as? [String: AnyObject])
+        }
+
+        
+        
     }
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Typing
+    
+    func sendStartTypingMessage(nickname: String) {
+        socket.emit("startType", nickname)
+    }
+    
+    func sendStopTypingMessage(nickname: String) {
+        socket.emit("stopType", nickname)
+    }
+    
+    
+    
+    
     
 }
 
