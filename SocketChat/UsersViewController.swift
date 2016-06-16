@@ -20,6 +20,11 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
     var configurationOK = false
     
     
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - View Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,6 +47,11 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        if nickname == nil {
+            askForNickname()
+        }
+
+        
     }
     
     
@@ -50,8 +60,43 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
         // Dispose of any resources that can be recreated.
     }
     
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Users
+    
+    func askForNickname() {
+        let alertController = UIAlertController(title: "SocketChat", message: "Please enter a nickname:", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alertController.addTextFieldWithConfigurationHandler(nil)
+        
+        let OKAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (action) -> Void in
+            let textfield = alertController.textFields![0]
+            if textfield.text?.characters.count == 0 {
+                self.askForNickname()
+            }
+            else {
+                self.nickname = textfield.text
+                
+                SocketIOManager.sharedInstance.connectToServerWithNickname(self.nickname, completionHandler: { (userList) -> Void in
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        if userList != nil {
+                            self.users = userList
+                            self.tblUserList.reloadData()
+                            self.tblUserList.hidden = false
+                        }
+                    })
+                })
+            }
+        }
+        
+        alertController.addAction(OKAction)
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
 
-
+    
+    //--------------------------------------------------------------------------------------------------------------------------
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -65,7 +110,9 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 
     
-    // MARK: IBAction Methods
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    // MARK: - IBAction Methods
     
     @IBAction func exitChat(sender: AnyObject) {
         print("Exit Chat button pressed")
@@ -73,7 +120,8 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     
     
-    // MARK: Custom Methods
+    //--------------------------------------------------------------------------------------------------------------------------
+    // MARK: - Custom Methods
     
     func configureNavigationBar() {
         navigationItem.title = "SocketChat"
@@ -89,7 +137,9 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     
-    // MARK: UITableView Delegate and Datasource methods
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    // MARK: - UITableView Delegate and Datasource methods
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -103,6 +153,11 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("idCellUser", forIndexPath: indexPath) as! UserCell
+        
+        cell.textLabel?.text = users[indexPath.row]["nickname"] as? String
+        cell.detailTextLabel?.text = (users[indexPath.row]["isConnected"] as! Bool) ? "Online" : "Offline"
+        cell.detailTextLabel?.textColor = (users[indexPath.row]["isConnected"] as! Bool) ? UIColor.greenColor() : UIColor.redColor()
+        
         
         return cell
     }

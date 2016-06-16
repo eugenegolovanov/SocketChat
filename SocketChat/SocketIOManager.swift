@@ -10,11 +10,26 @@ import UIKit
 
 class SocketIOManager: NSObject {
     
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Properties
+
+    
     static let sharedInstance = SocketIOManager()
     var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://192.168.0.4:3000")!)
     
     
-    //
+    
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Init
+    
+    override init() {
+        super.init()
+    }
+    
+
+    //--------------------------------------------------------------------------------------------------------------------------
+    //MARK: - Connection
+    
     func establishConnection() {
         socket.connect()
     }
@@ -24,10 +39,15 @@ class SocketIOManager: NSObject {
         socket.disconnect()
     }
     
-    override init() {
-        super.init()
-    }
     
+    func connectToServerWithNickname(nickname: String, completionHandler: (userList: [[String: AnyObject]]!) -> Void) {
+        socket.emit("connectUser", nickname)
+        
+        socket.on("userList") { ( dataArray, ack) -> Void in
+            completionHandler(userList: dataArray[0] as! [[String: AnyObject]])
+        }
+
+    }
     
     
 }
