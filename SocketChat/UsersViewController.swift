@@ -115,7 +115,14 @@ class UsersViewController: UIViewController, UITableViewDelegate, UITableViewDat
     // MARK: - IBAction Methods
     
     @IBAction func exitChat(sender: AnyObject) {
-        print("Exit Chat button pressed")
+        SocketIOManager.sharedInstance.exitChatWithNickname(self.nickname) { () -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.nickname = nil
+                self.users.removeAll()
+                self.tblUserList.hidden = true
+                self.askForNickname()
+            })
+        }
     }
 
     

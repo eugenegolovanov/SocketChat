@@ -49,5 +49,10 @@ class SocketIOManager: NSObject {
 
     }
     
+    func exitChatWithNickname(nickname: String, completionHandler: () -> Void) {
+        socket.emit("exitUser", nickname)
+        completionHandler()
+    }
+    
     
 }
